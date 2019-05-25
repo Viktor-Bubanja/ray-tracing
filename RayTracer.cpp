@@ -9,6 +9,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include "Sphere.h"
+#include "Cylinder.h"
 #include "SceneObject.h"
 #include "Ray.h"
 #include "Plane.h"
@@ -53,7 +54,7 @@ glm::vec3 trace(Ray ray, int step)
     //----------------------------------Textures-------------------------------------------------
 
     //Floor texture
-    if(ray.xindex == 3) {
+    if(ray.xindex == 4) {
             int modx = (int)((ray.xpt.x + 100) /10) % 2;
             int modz = (int)((ray.xpt.z + 100) /10) % 2;
 
@@ -99,11 +100,6 @@ glm::vec3 trace(Ray ray, int step)
     }
 
 
-
-
-
-
-
     return colorSum;
 }
 
@@ -145,7 +141,6 @@ void display()
 			glVertex2f(xp, yp+cellY);
         }
     }
-
     glEnd();
     glFlush();
 }
@@ -168,6 +163,7 @@ void initialize()
     Sphere *sphere1 = new Sphere(glm::vec3(-5.0, -5.0, -100.0), 15.0, glm::vec3(0, 0, 1));
     Sphere *sphere2 = new Sphere(glm::vec3(5.0, 15.0, -70.0), 6, glm::vec3(1, 0, 0));
     Sphere *sphere3 = new Sphere(glm::vec3(20.0, 4.0, -100.0), 3, glm::vec3(0, 1, 0));
+    Cylinder *cylinder = new Cylinder(glm::vec3(20, 3, -100), 15, glm::vec3(0,0,1));
     Plane *plane = new Plane(glm::vec3(-20., -20, -40),
                              glm::vec3(20., -20, -40),
                              glm::vec3(20., -20, -200),
@@ -176,6 +172,7 @@ void initialize()
     sceneObjects.push_back(sphere1);
     sceneObjects.push_back(sphere2);
     sceneObjects.push_back(sphere3);
+    sceneObjects.push_back(cylinder);
     sceneObjects.push_back(plane);
 }
 
