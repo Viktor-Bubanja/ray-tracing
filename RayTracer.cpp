@@ -59,9 +59,9 @@ glm::vec3 trace(Ray ray, int step)
             int modz = (int)((ray.xpt.z + 100) /10) % 2;
 
            if((modx && modz) || (!modx && !modz)){
-               materialCol = glm::vec3(0.1,0.1,0.1);}
+               materialCol = glm::vec3(0.8,0,0.8);}
            else{
-               materialCol = glm::vec3(1,1,1);}
+               materialCol = glm::vec3(0,1,1);}
     }
    //-------------------------------------------------------------------------------------------
 
@@ -160,10 +160,10 @@ void initialize()
 //    texture = TextureBMP("floor_tiles.bmp");
 
 	//-- Create a pointer to a sphere object
-    Sphere *sphere1 = new Sphere(glm::vec3(-5.0, -5.0, -100.0), 15.0, glm::vec3(0, 0, 1));
+    Sphere *sphere1 = new Sphere(glm::vec3(-15.0, -5.0, -100.0), 15.0, glm::vec3(0, 0, 1));
     Sphere *sphere2 = new Sphere(glm::vec3(5.0, 15.0, -70.0), 6, glm::vec3(1, 0, 0));
     Sphere *sphere3 = new Sphere(glm::vec3(20.0, 4.0, -100.0), 3, glm::vec3(0, 1, 0));
-    Cylinder *cylinder = new Cylinder(glm::vec3(20, 3, -100), 15, glm::vec3(0,0,1));
+    Cylinder *cylinder = new Cylinder(glm::vec3(0, 3, -100), 5, 80, glm::vec3(0,0,1));
     Plane *plane = new Plane(glm::vec3(-20., -20, -40),
                              glm::vec3(20., -20, -40),
                              glm::vec3(20., -20, -200),
