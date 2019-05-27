@@ -113,7 +113,7 @@ void display()
 	float cellX = (XMAX-XMIN)/NUMDIV;  //cell width
 	float cellY = (YMAX-YMIN)/NUMDIV;  //cell height
 
-	glm::vec3 eye(0., 0., 0.);  //The eye position (source of primary rays) is the origin
+    glm::vec3 eye(0., 20, 0.);  //The eye position (source of primary rays) is the origin
 
 	glClear(GL_COLOR_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
@@ -160,14 +160,14 @@ void initialize()
 //    texture = TextureBMP("floor_tiles.bmp");
 
 	//-- Create a pointer to a sphere object
-    Sphere *sphere1 = new Sphere(glm::vec3(-15.0, -5.0, -100.0), 15.0, glm::vec3(0, 0, 1));
-    Sphere *sphere2 = new Sphere(glm::vec3(5.0, 15.0, -70.0), 6, glm::vec3(1, 0, 0));
-    Sphere *sphere3 = new Sphere(glm::vec3(20.0, 4.0, -100.0), 3, glm::vec3(0, 1, 0));
-    Cylinder *cylinder = new Cylinder(glm::vec3(0, 3, -100), 5, 80, glm::vec3(0,0,1));
-    Plane *plane = new Plane(glm::vec3(-20., -20, -40),
-                             glm::vec3(20., -20, -40),
-                             glm::vec3(20., -20, -200),
-                             glm::vec3(-20., -20, -200),
+    Sphere *sphere1 = new Sphere(glm::vec3(-5, 15, -100.0), 15.0, glm::vec3(0, 0, 1));
+    Sphere *sphere2 = new Sphere(glm::vec3(5.0, 25.0, -70.0), 6, glm::vec3(1, 0, 0));
+    Sphere *sphere3 = new Sphere(glm::vec3(20.0, 24.0, -100.0), 3, glm::vec3(0, 1, 0));
+    Cylinder *cylinder = new Cylinder(glm::vec3(5, 0, -50), 5, 15, glm::vec3(0,0,1));
+    Plane *plane = new Plane(glm::vec3(-20., 0, -40),
+                             glm::vec3(20., 0, -40),
+                             glm::vec3(20., 0, -200),
+                             glm::vec3(-20., 0, -200),
                              glm::vec3(0.5, 0.5, 0));
     sceneObjects.push_back(sphere1);
     sceneObjects.push_back(sphere2);
@@ -181,7 +181,7 @@ void initialize()
 int main(int argc, char *argv[]) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB );
-    glutInitWindowSize(600, 600);
+    glutInitWindowSize(500, 500);
     glutInitWindowPosition(20, 20);
     glutCreateWindow("Raytracer");
 

@@ -16,15 +16,20 @@ float Cylinder::intersect(glm::vec3 posn, glm::vec3 dir)
     float a = pow(dir.x, 2) + pow(dir.z, 2);
     float b = 2*(dir.x*(posn.x - center.x) + dir.z*(posn.z - center.z));
     float c = pow(posn.x - center.x, 2) + pow(posn.z - center.z, 2) - pow(radius, 2);
-    float discriminant = sqrt(pow(b, 2) - 4*a*c);
+    float delta = pow(b, 2) - 4*a*c;
 
-    float t1 = (-b + discriminant)/(2*a);
-    float t2 = (-b - discriminant)/(2*a);
-    if (t1 > (center.y + height)) {
-        if (t2 > (center.y + height)) return -1;
-        return t2;
+    if(fabs(delta) < 0.001) return -1.0;
+    if(delta < 0.0) return -1.0;
+
+    float t1 = (-b - sqrt(delta))/(2*a);
+    float t2 = (-b + sqrt(delta))/(2*a);
+    if ((posn.y + t1*dir.y) > (center.y + height)) {
+        if ((posn.y + t2*dir.y) > (center.y + height)) return -1;
+        return (center.y + height - posn.y)/dir.y;
     }
     return (t1 < t2)? t1: t2;
+
+
 
 //    glm::vec3 vdif = posn - center;
 //    float b = glm::dot(dir, vdif);
