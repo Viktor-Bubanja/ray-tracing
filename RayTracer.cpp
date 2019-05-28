@@ -44,11 +44,16 @@ glm::vec3 trace(Ray ray, int step)
     glm::vec3 colorSum;
 
 
-    ray.closestPt(sceneObjects);		//Compute the closest point of intersetion of objects with the ray
+    ray.closestPt(sceneObjects);		//Compute the closest point of intersetion of objects with the ray`
 
     if(ray.xindex == -1) return backgroundCol;      //If there is no intersection return background colour
 
     glm::vec3 materialCol = sceneObjects[ray.xindex]->getColor(); //else return object's colour
+
+    glm::vec3 normalVector = sceneObjects[ray.xindex]->normal(ray.xpt); //normal vector of sphere
+
+    glm::vec3 lightVector = light - ray.xpt; //light vector
+    lightVector = glm::normalize(lightVector); //normal light vector
 
 
     //----------------------------------Textures-------------------------------------------------
@@ -63,14 +68,9 @@ glm::vec3 trace(Ray ray, int step)
            else{
                materialCol = glm::vec3(0,1,1);}
     }
-   //-------------------------------------------------------------------------------------------
 
 
-
-    glm::vec3 normalVector = sceneObjects[ray.xindex]->normal(ray.xpt); //normal vector of sphere
-
-    glm::vec3 lightVector = light - ray.xpt; //light vector
-    lightVector = glm::normalize(lightVector); //normal light vector
+    //-------------------------------------------------------------------------------------------
 
     float lDotn = glm::dot(lightVector, normalVector);
 
@@ -99,8 +99,49 @@ glm::vec3 trace(Ray ray, int step)
         colorSum = colorSum + (0.8f*reflectedCol);
     }
 
+    //------------------------------------Refraction----------------------------------------------
+
+    if (ray.xindex == 3 && step < MAX_STEPS) {
+        float eta = 1/1.01;
+        glm::vec3 g = glm::refract(ray.dir, normalVector, eta);
+        Ray refractionRay(ray.xpt, g);
+        refractionRay.closestPt(sceneObjects);
+        glm::vec3 m = sceneObjects[refractionRay.xindex]->normal(refractionRay.xpt);
+        glm::vec3 h = glm::refract(g, -m, 1.0f/eta);
+        Ray outRay(refractionRay.xpt, h);
+        glm::vec3 refractionColor = trace(outRay, step + 1);
+        colorSum += refractionColor;
+    }
+
+    //---------------------------------------------------------------------------------------------
+
 
     return colorSum;
+}
+
+glm::vec3 anti_aliasing(glm::vec3 eye, float size, float x_pos, float y_pos) {
+    float quarters = size/4;
+    float threeQuarters = size * 0.75;
+    glm::vec3 image(0);
+
+    Ray ray = Ray(eye, glm::vec3(x_pos + quarters, y_pos + quarters, -EDIST));
+    ray.normalize();
+    image += trace(ray, 1);
+
+    ray = Ray(eye, glm::vec3(x_pos + quarters, y_pos + threeQuarters, -EDIST));
+    ray.normalize();
+    image += trace(ray, 1);
+
+    ray = Ray(eye, glm::vec3(x_pos + threeQuarters, y_pos + quarters, -EDIST));
+    ray.normalize();
+    image += trace(ray, 1);
+
+    ray = Ray(eye, glm::vec3(x_pos + threeQuarters, y_pos + threeQuarters, -EDIST));
+    ray.normalize();
+    image += trace(ray, 1);
+
+    image *= glm::vec3(0.25);
+    return image;
 }
 
 //---The main display module -----------------------------------------------------------
@@ -132,8 +173,8 @@ void display()
 
 		    Ray ray = Ray(eye, dir);		//Create a ray originating from the camera in the direction 'dir'
 			ray.normalize();				//Normalize the direction of the ray to a unit vector
-		    glm::vec3 col = trace (ray, 1); //Trace the primary ray and get the colour value
-
+//            glm::vec3 col = trace (ray, 1); //Trace the primary ray and get the colour value
+            glm::vec3 col = anti_aliasing(eye, cellX, xp, yp);
 			glColor3f(col.r, col.g, col.b);
 			glVertex2f(xp, yp);				//Draw each cell with its color value
 			glVertex2f(xp+cellX, yp);
@@ -161,9 +202,9 @@ void initialize()
 
 	//-- Create a pointer to a sphere object
     Sphere *sphere1 = new Sphere(glm::vec3(-5, 15, -100.0), 15.0, glm::vec3(0, 0, 1));
-    Sphere *sphere2 = new Sphere(glm::vec3(5.0, 25.0, -70.0), 6, glm::vec3(1, 0, 0));
+    Sphere *sphere2 = new Sphere(glm::vec3(5.0, 25.0, -70.0), 6, glm::vec3(0, 0, 0));
     Sphere *sphere3 = new Sphere(glm::vec3(20.0, 24.0, -100.0), 3, glm::vec3(0, 1, 0));
-    Cylinder *cylinder = new Cylinder(glm::vec3(5, 0, -50), 5, 15, glm::vec3(0,0,1));
+    Cylinder *cylinder = new Cylinder(glm::vec3(0, 0, -50), 5, 15, glm::vec3(0,0,1));
     Plane *plane = new Plane(glm::vec3(-20., 0, -40),
                              glm::vec3(20., 0, -40),
                              glm::vec3(20., 0, -200),
