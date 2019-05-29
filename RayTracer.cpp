@@ -101,17 +101,17 @@ glm::vec3 trace(Ray ray, int step)
 
     //------------------------------------Refraction----------------------------------------------
 
-    if (ray.xindex == 3 && step < MAX_STEPS) {
-        float eta = 1/1.01;
-        glm::vec3 g = glm::refract(ray.dir, normalVector, eta);
-        Ray refractionRay(ray.xpt, g);
-        refractionRay.closestPt(sceneObjects);
-        glm::vec3 m = sceneObjects[refractionRay.xindex]->normal(refractionRay.xpt);
-        glm::vec3 h = glm::refract(g, -m, 1.0f/eta);
-        Ray outRay(refractionRay.xpt, h);
-        glm::vec3 refractionColor = trace(outRay, step + 1);
-        colorSum += refractionColor;
-    }
+//    if (ray.xindex == 3 && step < MAX_STEPS) {
+//        float eta = 1/1.01;
+//        glm::vec3 g = glm::refract(ray.dir, normalVector, eta);
+//        Ray refractionRay(ray.xpt, g);
+//        refractionRay.closestPt(sceneObjects);
+//        glm::vec3 m = sceneObjects[refractionRay.xindex]->normal(refractionRay.xpt);
+//        glm::vec3 h = glm::refract(g, -m, 1.0f/eta);
+//        Ray outRay(refractionRay.xpt, h);
+//        glm::vec3 refractionColor = trace(outRay, step + 1);
+//        colorSum += refractionColor;
+//    }
 
     //---------------------------------------------------------------------------------------------
 
@@ -172,8 +172,7 @@ void display()
 		    glm::vec3 dir(xp+0.5*cellX, yp+0.5*cellY, -EDIST);	//direction of the primary ray
 
 		    Ray ray = Ray(eye, dir);		//Create a ray originating from the camera in the direction 'dir'
-			ray.normalize();				//Normalize the direction of the ray to a unit vector
-//            glm::vec3 col = trace (ray, 1); //Trace the primary ray and get the colour value
+            ray.normalize();				//Normalize the direction of the ray to a unit vector
             glm::vec3 col = anti_aliasing(eye, cellX, xp, yp);
 			glColor3f(col.r, col.g, col.b);
 			glVertex2f(xp, yp);				//Draw each cell with its color value
@@ -187,7 +186,7 @@ void display()
 }
 
 
-//---This function initializes the scene ------------------------------------------- 
+//---This function initializes the scene -------------------------------------------
 //   Specifically, it creates scene objects (spheres, planes, cones, cylinders etc)
 //     and add them to the list of scene objects.
 //   It also initializes the OpenGL orthographc projection matrix for drawing the
@@ -201,20 +200,62 @@ void initialize()
 //    texture = TextureBMP("floor_tiles.bmp");
 
 	//-- Create a pointer to a sphere object
-    Sphere *sphere1 = new Sphere(glm::vec3(-5, 15, -100.0), 15.0, glm::vec3(0, 0, 1));
-    Sphere *sphere2 = new Sphere(glm::vec3(5.0, 25.0, -70.0), 6, glm::vec3(0, 0, 0));
+    Sphere *sphere1 = new Sphere(glm::vec3(-5, 15, -200.0), 15.0, glm::vec3(0, 0, 1));
+    Sphere *sphere2 = new Sphere(glm::vec3(5.0, 25.0, -70.0), 6, glm::vec3(1, 0, 0));
     Sphere *sphere3 = new Sphere(glm::vec3(20.0, 24.0, -100.0), 3, glm::vec3(0, 1, 0));
-    Cylinder *cylinder = new Cylinder(glm::vec3(0, 0, -50), 5, 15, glm::vec3(0,0,1));
+    Cylinder *cylinder = new Cylinder(glm::vec3(10, 0, -50), 5, 15, glm::vec3(0,0,1));
     Plane *plane = new Plane(glm::vec3(-20., 0, -40),
                              glm::vec3(20., 0, -40),
                              glm::vec3(20., 0, -200),
                              glm::vec3(-20., 0, -200),
                              glm::vec3(0.5, 0.5, 0));
+    int boxLeftX = -10;
+    int boxRightX = -6;
+    int boxTopY = 9;
+    int boxBottomY = 5;
+    int boxCloseZ = -60;
+    int boxFarZ = -70;
+    Plane *boxBottom = new Plane(glm::vec3(boxLeftX, boxBottomY, boxCloseZ),
+                             glm::vec3(boxRightX, boxBottomY, boxCloseZ),
+                             glm::vec3(boxRightX, boxBottomY, boxFarZ),
+                             glm::vec3(boxLeftX, boxBottomY, boxFarZ),
+                             glm::vec3(1, 0.5, 1));
+    Plane *boxTop = new Plane(glm::vec3(boxLeftX, boxTopY, boxCloseZ),
+                             glm::vec3(boxRightX, boxTopY, boxCloseZ),
+                             glm::vec3(boxRightX, boxTopY, boxFarZ),
+                             glm::vec3(boxLeftX, boxTopY, boxFarZ),
+                             glm::vec3(1, 0.5, 1));
+    Plane *boxLeft = new Plane(glm::vec3(boxLeftX, boxBottomY, boxFarZ),
+                             glm::vec3(boxLeftX, boxBottomY, boxCloseZ),
+                             glm::vec3(boxLeftX, boxTopY, boxCloseZ),
+                             glm::vec3(boxLeftX, boxTopY, boxFarZ),
+                             glm::vec3(1, 0.5, 1));
+    Plane *boxRight = new Plane(glm::vec3(boxRightX, boxBottomY, boxFarZ),
+                             glm::vec3(boxRightX, boxBottomY, boxCloseZ),
+                             glm::vec3(boxRightX, boxTopY, boxCloseZ),
+                             glm::vec3(boxRightX, boxTopY, boxFarZ),
+                             glm::vec3(1, 0.5, 1));
+    Plane *boxClose = new Plane(glm::vec3(boxLeftX, boxBottomY, boxCloseZ),
+                             glm::vec3(boxRightX, boxBottomY, boxCloseZ),
+                             glm::vec3(boxRightX, boxTopY, boxCloseZ),
+                             glm::vec3(boxLeftX, boxTopY, boxCloseZ),
+                             glm::vec3(1, 0.5, 1));
+    Plane *boxFar = new Plane(glm::vec3(boxLeftX, boxBottomY, boxFarZ),
+                             glm::vec3(boxRightX, boxBottomY, boxFarZ),
+                             glm::vec3(boxRightX, boxTopY, boxFarZ),
+                             glm::vec3(boxLeftX, boxTopY, boxFarZ),
+                             glm::vec3(1, 0.5, 1));
     sceneObjects.push_back(sphere1);
     sceneObjects.push_back(sphere2);
     sceneObjects.push_back(sphere3);
     sceneObjects.push_back(cylinder);
     sceneObjects.push_back(plane);
+    sceneObjects.push_back(boxBottom);
+    sceneObjects.push_back(boxTop);
+    sceneObjects.push_back(boxLeft);
+    sceneObjects.push_back(boxRight);
+    sceneObjects.push_back(boxClose);
+    sceneObjects.push_back(boxFar);
 }
 
 

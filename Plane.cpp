@@ -56,6 +56,6 @@ float Plane::intersect(glm::vec3 posn, glm::vec3 dir)
 */
 glm::vec3 Plane::normal(glm::vec3 pt)
 {
-    return glm::normalize(glm::cross((b-a),  (d-a)));;
+    return glm::normalize(glm::cross((b-a),  (d-a)));
 }
 
