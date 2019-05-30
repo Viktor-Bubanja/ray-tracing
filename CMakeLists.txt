@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(lab7)
+project(assignment2)
 
-add_executable(RayTracer.out RayTracer.cpp Ray.cpp SceneObject.cpp Sphere.cpp Plane.cpp Cylinder.cpp)
+add_executable(RayTracer.out RayTracer.cpp Ray.cpp SceneObject.cpp Sphere.cpp Plane.cpp Cylinder.cpp CylinderShear.cpp TextureBMP.cpp)
 
 
 
